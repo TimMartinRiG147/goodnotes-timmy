@@ -57,9 +57,8 @@ jobs:
 
     - name: Load Testing
       run: |
-        kubectl get ing -A
-        curl http://foo.localhost
-        curl http://bar.localhost
+        curl -v http://foo.localhost
+        curl -v http://bar.localhost
 
     # - name: Load Testing
     #   run: |
