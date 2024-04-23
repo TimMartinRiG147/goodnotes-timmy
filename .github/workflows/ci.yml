@@ -42,8 +42,8 @@ jobs:
 
     - name:  Testing
       run: |
-        curl http://foo.localhost
-        curl http://bar.localhost
+        curl -v http://foo.localhost
+        curl -v http://bar.localhost
 
     - name: Load Testing
       run: |
