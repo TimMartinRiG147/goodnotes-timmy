@@ -40,6 +40,11 @@ jobs:
         kubectl wait --for=condition=available --timeout=300s deployment/bar
         kubectl wait --for=condition=available --timeout=300s deployment/foo
 
+    - name:  Testing
+      run: |
+        curl http://foo.localhost
+        curl http://bar.localhost
+
     - name: Load Testing
       run: |
         ./scripts/load-test.sh
