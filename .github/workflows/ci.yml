@@ -60,10 +60,10 @@ jobs:
         curl -v http://foo.localhost
         curl -v http://bar.localhost
 
-    # - name: Load Testing
-    #   run: |
-    #     ./scripts/load-test.sh
-    #     cat load-test-results.txt
+    - name: Load Testing
+      run: |
+        bash ./scripts/load-test.sh
+        # cat load-test-results.txt
 
     # - name: Post Results to PR
     #   if: github.event_name == 'pull_request'
