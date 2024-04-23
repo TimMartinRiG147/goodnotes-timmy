@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bar
+  labels:
+    app: bar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bar
+  template:
+    metadata:
+      labels:
+        app: bar
+    spec:
+      containers:
+      - name: bar
+        image: hashicorp/http-echo
+        ports:
+        - containerPort: 5678
+        env:
+        - name: ECHO_TEXT
+          value: "bar"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bar-service
+spec:
+  type: ClusterIP
+  selector:
+    app: bar
+  ports:
+    - port: 5678
+      targetPort: 5678

@@ -1,0 +1,56 @@
+name: Goodnotes CI Task
+
+on:
+  push:
+    branches:
+      - main 
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup KinD Cluster
+      run: |
+        curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.14.0/kind-$(uname)-amd64
+        chmod +x ./kind
+        ./kind create cluster --config cluster.yml
+
+    - name: Install kubectl
+      run: |
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        chmod +x ./kubectl
+        sudo mv ./kubectl /usr/local/bin/kubectl
+
+    - name: Deploy Ingress Controller
+      run: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+
+    - name: Deploy Applications
+      run: |
+        kubectl apply -f deployment-bar.yml
+        kubectl apply -f deployment-foo.yml
+
+    - name: Wait for Deployments
+      run: |
+        kubectl wait --for=condition=available --timeout=300s deployment/bar
+        kubectl wait --for=condition=available --timeout=300s deployment/foo
+
+    - name: Load Testing
+      run: |
+        ./load-test.sh
+        cat load-test-results.txt
+
+    # - name: Post Results to PR
+    #   if: github.event_name == 'pull_request'
+    #   uses: actions/github-script@v6
+    #   with:
+    #     script: |
+    #       const output = fs.readFileSync('load-test-results.txt', 'utf8');
+    #       github.issues.createComment({
+    #         issue_number: context.issue.number,
+    #         owner: context.repo.owner,
+    #         repo: context.repo.repo,
+    #         body: `Load Test Results:\n${output}`
+    #       });
