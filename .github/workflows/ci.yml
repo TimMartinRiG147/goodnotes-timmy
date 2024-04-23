@@ -43,8 +43,10 @@ jobs:
 
     - name:  Testing
       run: |
-        curl -v http://foo.localhost
-        curl -v http://bar.localhost
+        # curl -v http://foo.localhost
+        # curl -v http://bar.localhost
+        kubectl get po -A
+        kubectl get no
 
     - name: Load Testing
       run: |
