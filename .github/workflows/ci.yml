@@ -16,7 +16,7 @@ jobs:
       run: |
         curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.14.0/kind-$(uname)-amd64
         chmod +x ./kind
-        ./kind create cluster --config cluster.yml
+        ./kind create cluster --config ./config/cluster.yaml
 
     - name: Install kubectl
       run: |
@@ -29,8 +29,8 @@ jobs:
 
     - name: Deploy Applications
       run: |
-        kubectl apply -f deployment-bar.yml
-        kubectl apply -f deployment-foo.yml
+        kubectl apply -f ./config/deployment-bar.yaml
+        kubectl apply -f ./config/deployment-foo.yaml
 
     - name: Wait for Deployments
       run: |
