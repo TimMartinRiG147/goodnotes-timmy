@@ -37,10 +37,11 @@ jobs:
     - name: Deploy Ingress Controller
       run: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 
-    - name: Deploy Applications
+    - name: Deploy Applications and Ingress
       run: |
         kubectl apply -f ./config/deployment-bar.yaml
         kubectl apply -f ./config/deployment-foo.yaml
+        kubectl apply -f ./config/ingress.yaml
 
     - name: Wait for Deployments
       run: |
