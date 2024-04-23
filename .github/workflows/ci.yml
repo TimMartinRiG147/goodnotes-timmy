@@ -39,7 +39,7 @@ jobs:
 
     - name: Load Testing
       run: |
-        ./load-test.sh
+        ./scripts/load-test.sh
         cat load-test-results.txt
 
     # - name: Post Results to PR
