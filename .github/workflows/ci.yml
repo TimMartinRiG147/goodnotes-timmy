@@ -18,15 +18,14 @@ jobs:
         chmod +x ./kind
         ./kind create cluster --config ./config/cluster.yaml
 
-    - name: Change Permissions
+    - name: Configuration, tools and dependencies
       run: |
-        chmod +x ./scripts/*.sh
-
-    - name: Install kubectl
-      run: |
+        sudo apt update && sudo apt upgrade -y
+        sudo apt install siege -y
         curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
         chmod +x ./kubectl
         sudo mv ./kubectl /usr/local/bin/kubectl
+        chmod +x ./scripts/*.sh
 
     - name: Deploy Ingress Controller
       run: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
