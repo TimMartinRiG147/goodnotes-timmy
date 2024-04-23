@@ -37,6 +37,7 @@ jobs:
 
     - name: Wait for Deployments
       run: |
+        kubectl wait --for=condition=available --timeout=300s deployment/ingress-nginx-controller -n ingress-nginx
         kubectl wait --for=condition=available --timeout=300s deployment/bar
         kubectl wait --for=condition=available --timeout=300s deployment/foo
 
