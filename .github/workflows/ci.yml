@@ -18,6 +18,10 @@ jobs:
         chmod +x ./kind
         ./kind create cluster --config ./config/cluster.yaml
 
+    - name: Change Permissions
+      run: |
+        chmod +x ./scripts/*.sh
+
     - name: Install kubectl
       run: |
         curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
