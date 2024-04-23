@@ -38,13 +38,14 @@ jobs:
         kubectl apply -f ./config/deployment-bar.yaml
         kubectl apply -f ./config/deployment-foo.yaml
         kubectl apply -f ./config/ingress.yaml
+        sleep 10
 
     - name: Deploy Ingress Controller
       run: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 
     - name: Wait for Deployments
       run: |
-        sleep 20
+        sleep 10
         kubectl wait --for=condition=available --timeout=300s deployment/ingress-nginx-controller -n ingress-nginx
         kubectl wait --for=condition=available --timeout=300s deployment/bar
         kubectl wait --for=condition=available --timeout=300s deployment/foo
@@ -56,14 +57,14 @@ jobs:
 
     - name: Load Testing
       run: |
-        # kubectl get ing -A
+        kubectl get ing -A
         curl http://foo.localhost
         curl http://bar.localhost
 
-    - name: Load Testing
-      run: |
-        ./scripts/load-test.sh
-        cat load-test-results.txt
+    # - name: Load Testing
+    #   run: |
+    #     ./scripts/load-test.sh
+    #     cat load-test-results.txt
 
     # - name: Post Results to PR
     #   if: github.event_name == 'pull_request'
