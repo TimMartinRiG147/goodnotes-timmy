@@ -17,7 +17,7 @@ jobs:
         curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.14.0/kind-$(uname)-amd64
         chmod +x ./kind
         ./kind create cluster --config ./config/cluster.yaml
-        
+
     - name: Disable IPv6
       run: |
         sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
@@ -44,7 +44,7 @@ jobs:
 
     - name: Wait for Deployments
       run: |
-        sleep 120
+        sleep 20
         kubectl wait --for=condition=available --timeout=300s deployment/ingress-nginx-controller -n ingress-nginx
         kubectl wait --for=condition=available --timeout=300s deployment/bar
         kubectl wait --for=condition=available --timeout=300s deployment/foo
@@ -56,8 +56,11 @@ jobs:
 
     - name: Load Testing
       run: |
-        curl -v http://foo.localhost
-        curl -v http://bar.localhost
+        curl http://foo.localhost
+        curl http://bar.localhost
+
+    - name: Load Testing
+      run: |
         ./scripts/load-test.sh
         cat load-test-results.txt
 
