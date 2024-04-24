@@ -59,6 +59,7 @@ jobs:
         cat load-test-results.txt
         # cat foo-load-test-results.txt
         # cat bar-load-test-results.txt
+        
 
     # - name: test
     #   if: github.event_name == 'pull_request'
@@ -94,6 +95,7 @@ jobs:
         user-agent: actions/github-script
         result-encoding: json
         retries: 0
+        # retry-exempt-status-codes: [400, 401, 403, 404, 422]
 
     - name: Post Results to PR
       if: github.event_name == 'pull_request'
