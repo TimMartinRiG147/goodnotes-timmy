@@ -50,16 +50,6 @@ jobs:
         kubectl wait --for=condition=available --timeout=300s deployment/bar
         kubectl wait --for=condition=available --timeout=300s deployment/foo
 
-    # - name:  Testing
-    #   run: |
-    #     kubectl get po -A
-    #     kubectl get no
-
-    # - name: Load Testing
-    #   run: |
-    #     curl http://foo.localhost
-    #     curl http://bar.localhost
-
     - name: Load Testing
       run: |
         bash ./scripts/load-test.sh
@@ -67,15 +57,15 @@ jobs:
         # cat foo-load-test-results.txt
         # cat bar-load-test-results.txt
 
-    # - name: Post Results to PR
-    #   if: github.event_name == 'pull_request'
-    #   uses: actions/github-script@v6
-    #   with:
-    #     script: |
-    #       const output = fs.readFileSync('load-test-results.txt', 'utf8');
-    #       github.issues.createComment({
-    #         issue_number: context.issue.number,
-    #         owner: context.repo.owner,
-    #         repo: context.repo.repo,
-    #         body: `Load Test Results:\n${output}`
-    #       });
+    - name: Post Results to PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const output = fs.readFileSync('load-test-results.txt', 'utf8');
+          github.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `Load Test Results:\n${output}`
+          });
