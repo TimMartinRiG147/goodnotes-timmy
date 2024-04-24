@@ -56,7 +56,7 @@ jobs:
     - name: Load Testing
       run: |
         bash ./scripts/load-test.sh
-        cat load-test-results.txt
+        # cat load-test-results.txt
         # cat foo-load-test-results.txt
         # cat bar-load-test-results.txt
 
@@ -86,37 +86,50 @@ jobs:
             body: '👋 Thanks for reporting!'
           })
 
-    - name: Encode Load Test Results
-      run: |
-        echo "load_results=$(cat load-test-results.txt | base64 -w 0)" >> $GITHUB_ENV
+    - name: Post results to PR
+    uses: actions/github-script@v6
+    with:
+      script: |
+        const fs = require('fs');
+        const siegeResults = fs.readFileSync('siege_results.txt', 'utf8');
+        github.issues.createComment({
+          issue_number: context.issue.number,
+          owner: context.repo.owner,
+          repo: context.repo.name,
+          body: siegeResults
+        })
 
-    - name: Post Results to PR
-      if: github.event_name == 'pull_request'
-      uses: actions/github-script@v6
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      with:
-        script: |
-          const output = Buffer.from(process.env.load_results, 'base64').toString('utf8');
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: `Load Test Results:\n\`\`\`\n${output}\n\`\`\``
-          });
+    # - name: Encode Load Test Results
+    #   run: |
+    #     echo "load_results=$(cat load-test-results.txt | base64 -w 0)" >> $GITHUB_ENV
 
-    - name: Post Results to PR
-      if: github.event_name == 'pull_request'
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const output = fs.readFileSync('load-test-results.txt', 'utf8');
-          github.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: `Load Test Results:\n${output}`
-          });
+    # - name: Post Results to PR
+    #   if: github.event_name == 'pull_request'
+    #   uses: actions/github-script@v6
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    #   with:
+    #     script: |
+    #       const output = Buffer.from(process.env.load_results, 'base64').toString('utf8');
+    #       github.rest.issues.createComment({
+    #         issue_number: context.issue.number,
+    #         owner: context.repo.owner,
+    #         repo: context.repo.repo,
+    #         body: `Load Test Results:\n\`\`\`\n${output}\n\`\`\``
+    #       });
+
+    # - name: Post Results to PR
+    #   if: github.event_name == 'pull_request'
+    #   uses: actions/github-script@v6
+    #   with:
+    #     script: |
+    #       const output = fs.readFileSync('load-test-results.txt', 'utf8');
+    #       github.issues.createComment({
+    #         issue_number: context.issue.number,
+    #         owner: context.repo.owner,
+    #         repo: context.repo.repo,
+    #         body: `Load Test Results:\n${output}`
+    #       });
 
     # - name: Post Results to PR
     #   if: github.event_name == 'pull_request'
