@@ -94,7 +94,6 @@ jobs:
         user-agent: actions/github-script
         result-encoding: json
         retries: 0
-        retry-exempt-status-codes: [400, 401, 403, 404, 422]
 
     - name: Post Results to PR
       if: github.event_name == 'pull_request'
