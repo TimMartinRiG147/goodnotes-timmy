@@ -91,7 +91,7 @@ jobs:
             body: `Load Test Results:\n\`\`\`\n${output}\n\`\`\``
           });
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
     - name: Post Results to PR
       if: github.event_name == 'pull_request'
