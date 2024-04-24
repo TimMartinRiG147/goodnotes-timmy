@@ -3,7 +3,10 @@ name: Goodnotes CI Task
 on:
   push:
     branches:
-      - main 
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build-and-test:
@@ -53,19 +56,20 @@ jobs:
     - name: Load Testing
       run: |
         bash ./scripts/load-test.sh
-        cat load-test-results.txt
+        # cat load-test-results.txt
         # cat foo-load-test-results.txt
         # cat bar-load-test-results.txt
 
-    - name: Post Results to PR
-      if: github.event_name == 'pull_request'
+    - name: Create Issue Comment
       uses: actions/github-script@v6
       with:
+        github-token: ${{ secrets.GH_TOKEN }}
         script: |
-          const output = fs.readFileSync('load-test-results.txt', 'utf8');
-          github.issues.createComment({
+          const fs = require('fs');
+          const siegeResults = fs.readFileSync('siege_results.txt', 'utf8');
+          github.rest.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: `Load Test Results:\n${output}`
+            body: siegeResults
           });
