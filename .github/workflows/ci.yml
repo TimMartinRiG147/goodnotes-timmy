@@ -79,6 +79,7 @@ jobs:
         echo "load_results=$(cat load-test-results.txt | base64 -w 0)" >> $GITHUB_ENV
 
     - name: Post Results to PR
+      if: github.event_name == 'pull_request'
       uses: actions/github-script@v6
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
