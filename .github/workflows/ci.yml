@@ -59,7 +59,7 @@ jobs:
         cat load-test-results.txt
         # cat foo-load-test-results.txt
         # cat bar-load-test-results.txt
-        
+
 
     # - name: test
     #   if: github.event_name == 'pull_request'
@@ -74,28 +74,24 @@ jobs:
     #         body: `Load Test Results: TEST}`
     #       });
 
-    - name: Read Load Test Results
-      id: load_results
+    - name: Encode Load Test Results
+      id: encode_results
       run: |
-        echo "load_results=$(cat load-test-results.txt)" >> $GITHUB_ENV
+        echo "load_results=$(cat load-test-results.txt | base64)" >> $GITHUB_ENV
 
     - name: Post Results to PR
       uses: actions/github-script@v6
       with:
         script: |
-          const output = process.env.load_results;
+          const output = Buffer.from(process.env.load_results, 'base64').toString('utf8');
           github.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: `Load Test Results:\n${output}`
+            body: `Load Test Results:\n\`\`\`\n${output}\n\`\`\``
           });
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        debug: false
-        user-agent: actions/github-script
-        result-encoding: json
-        retries: 0
-        # retry-exempt-status-codes: [400, 401, 403, 404, 422]
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Post Results to PR
       if: github.event_name == 'pull_request'
