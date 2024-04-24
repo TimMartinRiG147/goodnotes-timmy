@@ -60,15 +60,28 @@ jobs:
         # cat foo-load-test-results.txt
         # cat bar-load-test-results.txt
 
+    # - name: Post Results to PR
+    #   if: github.event_name == 'pull_request'
+    #   uses: actions/github-script@v6
+    #   with:
+    #     script: |
+    #       const output = fs.readFileSync('load-test-results.txt', 'utf8');
+    #       github.issues.createComment({
+    #         issue_number: context.issue.number,
+    #         owner: context.repo.owner,
+    #         repo: context.repo.repo,
+    #         body: `Load Test Results:\n${output}`
+    #       });
+
     - name: Post Results to PR
       if: github.event_name == 'pull_request'
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const output = fs.readFileSync('load-test-results.txt', 'utf8');
-          github.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: `Load Test Results:\n${output}`
-          });
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # Read load test results
+        output=$(cat load-test-results.txt)
+
+        # Use GitHub API to post the results as a comment
+        curl -s -X POST -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.v3+json" \
+          "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/comments" \
+          -d "{\"body\": \"Load Test Results:\n\`\`\`\n${output}\n\`\`\`\"}"
