@@ -60,6 +60,19 @@ jobs:
         # cat foo-load-test-results.txt
         # cat bar-load-test-results.txt
 
+    - name: test
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const output = fs.readFileSync('load-test-results.txt', 'utf8');
+          github.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `Load Test Results: TEST}`
+          });
+
     - name: Post Results to PR
       if: github.event_name == 'pull_request'
       uses: actions/github-script@v6
