@@ -74,8 +74,7 @@ jobs:
     #         body: `Load Test Results: TEST}`
     #       });
 
-
-    - name: test
+    - name: test comment
       uses: actions/github-script@v3
       with:
         github-token: ${{secrets.GH_TOKEN}}
